@@ -1,5 +1,6 @@
 $(document).ready(function () {
 	
+	//get all the elements and store them in arrays
 	var hrten = new Array(
 		document.getElementById("hrten1").id
 		,document.getElementById("hrten2").id
@@ -37,138 +38,87 @@ $(document).ready(function () {
 		,document.getElementById("minone8").id
 		,document.getElementById("minone9").id
 	);
+	
+	//array of the elemenent arrays
+	var elems = new Array(hrten,hrone,minten,minone);
 
 	setTime();
 	
-		function setTime(){
-			var d = new Date();
-			var h = d.getHours();
-			var m = d.getMinutes();
-		
-			if (h > 12) {
-				h -= 12;
-			} 
-			else if (h === 0)
-			{
-				h = 12;
-			}	
-		
-			var hrTenCnt = Math.floor(h / 10);
-			var hrOneCnt = h % 10;
-			var minTenCnt = Math.floor(m / 10);
-			var minOneCnt = m % 10;
-
-			var hrTenVal = new Array (0,0,0);
-			var hrOneVal = new Array (0,0,0,0,0,0,0,0,0);
-			var minTenVal = new Array (0,0,0,0,0,0);
-			var minOneVal = new Array (0,0,0,0,0,0,0,0,0);			
-			//alert(hrTenCnt + ' / ' + hrOneCnt + ' / ' + minTenCnt + ' / ' + minOneCnt);
-			
-			//alert(Math.floor(Math.random()*(2 - hrTenCnt)));
-			
-			for(i=0; i < hrTenVal.length; i++)
-			{
-				hrTenVal[i] = 0;
-			}
-			
-			for (var c=0; c < hrTenCnt;)
-			{
-				var x = Math.floor(Math.random()*3)
-				if (hrTenVal[x] === 0){
-					hrTenVal[x] = 1;
-					c++;
-				}
-			}
-			
-			for(var i=0; i < hrten.length; i++)
-			{
-				if (hrTenVal[i] === 1) {
-					$(document.getElementById(hrten[i])).css('background-color',pickColor());
-				}
-				else {
-					$(document.getElementById(hrten[i])).css('background-color','#666666');
-				}
-			}
-			//---------------------------------
-
-			for (var c=0; c < hrOneCnt;)
-			{
-				var x = Math.floor(Math.random()*9)
-				if (hrOneVal[x] == 0){
-					hrOneVal[x] = 1;
-					c++;
-				}
-			}			
-				
-				
-			for(var i=0; i < hrone.length; i++)
-			{
-				if (hrOneVal[i] == 1) {
-					$(document.getElementById(hrone[i])).css('background-color',pickColor());
-				}
-				else {
-					$(document.getElementById(hrone[i])).css('background-color','#666666');
-				}
-			}
-			//-------------------------------------
-			for (var c=0; c < minTenCnt;)
-			{
-				var x = Math.floor(Math.random()*9)
-				if (minTenVal[x] == 0){
-					minTenVal[x] = 1;
-					c++;
-				}
-			}	
-			
-			for(var i=0; i < minten.length; i++)
-			{
-				if (minTenVal[i] == 1) {
-					$(document.getElementById(minten[i])).css('background-color',pickColor());
-				}
-				else {
-					$(document.getElementById(minten[i])).css('background-color','#666666');
-				}
-			}
-			
-			//---------------------------------------------------
-			for (var c=0; c < minOneCnt;)
-			{
-				var x = Math.floor(Math.random()*9)
-				if (minOneVal[x] == 0){
-					minOneVal[x] = 1;
-					c++;
-				}
-			}	
-			
-			for(var i=0; i < minone.length; i++)
-			{
-				if (minOneVal[i] == 1) {
-					$(document.getElementById(minone[i])).css('background-color',pickColor());
-				}
-				else {
-					$(document.getElementById(minone[i])).css('background-color','#666666');
-				}
-			}
-			
-			setTimeout(function(){setTime()},5000);
-		}
+	function setTime(){
+		var d = new Date();
+		var h = d.getHours();
+		var m = d.getMinutes();
 	
-	function pickColor() {
-		switch(Math.floor(Math.random()*6))
+		if (h > 12) {
+			h -= 12;
+		} 
+		else if (h === 0)
 		{
-			case 0: 
-			return "red";
-			case 1:
-			return "orange";
-			case 2: 
-			return "yellow";
-			case 3:
-			return "green";
-			case 4:
-			return "blue";
-			case 5:
-			return "purple";
+			h = 12;
+		}	
+	
+		//how many lights will we need to light up for each "digit"
+		var hrTenCnt = Math.floor(h / 10);
+		var hrOneCnt = h % 10;
+		var minTenCnt = Math.floor(m / 10);
+		var minOneCnt = m % 10;
+
+		//array of how many need to be turned on per digit
+		var countArray = new Array (hrTenCnt, hrOneCnt, minTenCnt, minOneCnt);
+		
+		//value for each light within its digit
+		//which ones will be lit up and which will be off. start with all off (0) and turn on (1) as needed later
+		var hrTenVal = new Array (0,0,0);
+		var hrOneVal = new Array (0,0,0,0,0,0,0,0,0);
+		var minTenVal = new Array (0,0,0,0,0,0);
+		var minOneVal = new Array (0,0,0,0,0,0,0,0,0);
+		//array of arrays used to turn lights on and off
+		var valueArray = new Array (hrTenVal, hrOneVal, minTenVal, minOneVal);
+
+		//loop through each digit.
+		for(i = 0; i < valueArray.length; i++)
+		{
+			//inner loop one
+			//clear all lights. since we need to turn them on and off randomly
+			for(j = 0; j < valueArray[i].length; j++){
+				valueArray[i][j] = 0; //not really needed because the val variables are created at each loop. possible improvemnt by restructuring variable declerations.
+				$(document.getElementById(elems[i][j])).css('background-color','#666666'); //turn the light to gray (off)
+			}
+			
+			//inner loop two
+			//now that the lights are all off loop through again and turn the correct amount on but place them randomly within the digit.
+			for(j = 0; j < countArray[i]; /*++ in loop*/ )
+			{
+				//randomly turn the lights on. make sure not to turn on a light that is already on. possible room for improvement as it may loop for a long time. haven't seen issues yet. but feels yucky.
+				var x = Math.floor(Math.random()* elems[i].length)
+				if (valueArray[i][x] === 0){
+					valueArray[i][x] = 1;
+					$(document.getElementById(elems[i][x])).css('background-color',"red"); //turn the light on.
+					j++; //only loop if light status was changed. 
+				}
+			}
 		}
-	};
+		
+		setTimeout(function(){setTime()},5000); //set the timer to call every 5 seconds.
+	}
+//i have taken teh pickColor function out of the code because i think it looks nicer when all one color.
+//this can be put back in later if wanted by updating the hardcoded "red" value above when updating the elems array's css.
+	// function pickColor() {
+		// switch(Math.floor(Math.random()*6))
+		// {
+			// case 0: 
+			// return "red";
+			// case 1:
+			// return "orange";
+			// case 2: 
+			// return "yellow";
+			// case 3:
+			// return "green";
+			// case 4:
+			// return "blue";
+			// case 5:
+			// return "purple";
+		// }
+	// };
 	
 	});
